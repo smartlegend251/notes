@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+<body>
+    <h2>List of Notes to Study:</h2>
+   
+    <form action="" method="post">
+        {% csrf_token %}
+        <fieldset>
+            <legend>Analysis and Design of Algorithms</legend>
+            <label for="chapter">Chapter Number:</label>
+            <input style="width: 385px;" type="number" max="7" name="chapter" id="chapter" required><br>
+            <label for="chapter">Marks Possibility:</label>
+            <input style="width: 375px;" type="number"  name="marks" id="chapter" required><br>
+
+            <input style="width: 500px;" type="text" name="notes" id="notes" placeholder="Enter the notes:" required>
+            <button type="submit">Post Note</button>
+        </fieldset>
+    </form>
+
+    <div style="margin: 3%;" ></div>
+    <div>
+        <h4>List:</h4>
+        <input type="text" id="searchInput" placeholder="Search...">
+
+        <table border="1" id="dataTable" >
+           
+            <tr >
+                <th>Sl No.</th>
+                <th>Chapter Name</th>
+                <th>Notes</th>
+                <th>Marks</th>
+                <th colspan="2">Action</th>
+                
+            </tr>
+            <script>
+                window.onload = function() {
+                    // Get all elements with class "colorapply"
+                    var rows = document.getElementsByClassName("colorapply");
+                    
+                    // Loop through each row and check the value of the hidden input with id "color"
+                    for (var i = 0; i < rows.length; i++) {
+                        var colorInput = rows[i].querySelector("#color");
+                        var value = colorInput.value;
+            
+                        // If value is 1, set background color to green, otherwise keep it red
+                        if (value == 1) {
+                            rows[i].style.backgroundColor = "lightgreen";
+                        } else {
+                            rows[i].style.backgroundColor = "none";
+                        }
+                    }
+                };
+            
+                // Function to perform search
+                function searchTable() {
+                    const input = document.getElementById('searchInput');
+                    const filter = input.value.toUpperCase();
+                    const table = document.getElementById('dataTable');
+                    const rows = table.getElementsByTagName('tr');
+            
+                    // Loop through all table rows and hide those that don't match the search input
+                    for (let i = 0; i < rows.length; i++) {
+                        const cells = rows[i].getElementsByTagName('td');
+                        let found = false;
+            
+                        for (let j = 0; j < cells.length; j++) {
+                            const cell = cells[j];
+            
+                            if (cell) {
+                                const textValue = cell.textContent || cell.innerText;
+                                if (textValue.toUpperCase().indexOf(filter) > -1) {
+                                    found = true;
+                                    break;
+                                }
+                            }
+                        }
+            
+                        // Show/hide rows based on search input
+                        if (found) {
+                            rows[i].style.display = '';
+                        } else {
+                            rows[i].style.display = 'none';
+                        }
+                    }
+                }
+            
+                // Event listener for search input
+                document.getElementById('searchInput').addEventListener('keyup', searchTable);
+            </script>
+            
+            {% for x, chapter_name in zipped_data %}
+            
+ 
+            <tr class="colorapply" id="colorapply" >
+                <td>{{ forloop.counter }}</td>
+                <td>{{ chapter_name }}</td>
+                <td>{{ x.notes }}</td>
+                <td>{{x.marks}} Marks</td>
+                <td>
+                    
+                    {%if x.new_check == 0%}
+                    <form action="/checkup" method="post">
+                        {% csrf_token %}
+                        <input type="hidden"  name="check" value="1">
+                        <input type="hidden" name="ids" value="{{x.id}}">
+                        <button type="submit">check</button>
+                    </form> 
+                    {%else%}
+                    <form action="/checkup" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="check" value="0">
+                        <input type="hidden" name="ids" value="{{x.id}}">
+                        <button type="submit">uncheck</button>
+                        </form>
+                        
+                    {% endif %}
+                        
+                   
+<td><button>delete</button></td>
+                    
+                </td>
+                  <input type="hidden"  id="color" value="{{x.new_check}}">
+            </tr>
+            
+            {% endfor %}
+            
+        
+        </table>
+    </div>
+    <style>
+        td,th,table{
+            padding: 5px;
+            align-items: center;
+            text-align: center;
+        }
+
+       
+    </style>
+    <script>
+
+
+    function color(){
+        values = document.getElementById('color').value;
+     
+    }
+    color()
+        // Function to perform search
+function searchTable() {
+    const input = document.getElementById('searchInput');
+    const filter = input.value.toUpperCase();
+    const table = document.getElementById('dataTable');
+    const rows = table.getElementsByTagName('tr');
+
+    // Loop through all table rows and hide those that don't match the search input
+    for (let i = 0; i < rows.length; i++) {
+        const cells = rows[i].getElementsByTagName('td');
+        let found = false;
+
+        for (let j = 0; j < cells.length; j++) {
+            const cell = cells[j];
+
+            if (cell) {
+                const textValue = cell.textContent || cell.innerText;
+                if (textValue.toUpperCase().indexOf(filter) > -1) {
+                    found = true;
+                    break;
+                }
+            }
+        }
+
+        // Show/hide rows based on search input
+        if (found) {
+            rows[i].style.display = '';
+        } else {
+            rows[i].style.display = 'none';
+        }
+    }
+}
+
+// Event listener for search input
+document.getElementById('searchInput').addEventListener('keyup', searchTable);
+
+    </script>
+</body>
+</html>
